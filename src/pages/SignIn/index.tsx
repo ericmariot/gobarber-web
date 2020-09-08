@@ -51,7 +51,11 @@ const SignIn: React.FC = () => {
       }
 
       // disparar um toast
-      addToast();
+      addToast({
+        type: 'error',
+        title: 'Authentication error',
+        description: 'An error has occured while making login, check the credentials',
+      });
     }
   }, [signIn, addToast]);
 

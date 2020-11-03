@@ -83,7 +83,7 @@ const SignUp: React.FC = () => {
 
             <Input name="name" icon={FiUser} placeholder="Name" />
             <Input name="email" icon={FiMail} placeholder="E-mail" />
-            <Input name="password" icon={FiLock} type="password" placeholder="Senha" />
+            <Input name="password" icon={FiLock} type="password" placeholder="Password" />
 
             <Button type="submit">Register</Button>
           </Form>

@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import DayPicker, { DayModifiers } from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
 
-import { Container, Header, HeaderContent, Profile, Content, Schedule, NextAppointment, Section, Appointment, Calendar } from './styles';
 import { FiClock, FiPower } from 'react-icons/fi';
-import { useAuth } from '../../hooks/auth';
+import { Container, Header, HeaderContent, Profile, Content, Schedule, NextAppointment, Section, Appointment, Calendar } from './styles';
 
 import logoImg from '../../assets/logo.svg';
+import { useAuth } from '../../hooks/auth';
 
 const Dashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
+    if(modifiers.available) {
+      setSelectedDate(day);
+    }
+  }, []);
 
   const { signOut, user } = useAuth();
 
@@ -98,7 +106,17 @@ const Dashboard: React.FC = () => {
           </Section>
         </Schedule>
 
-        <Calendar/>
+        <Calendar>
+          <DayPicker
+            fromMonth={new Date()}
+            disabledDays={[{ daysOfWeek: [0, 6] }]}
+            modifiers={{
+              available: { daysOfWeek: [1, 2, 3, 4, 5] },
+            }}
+            selectedDays={selectedDate}
+            onDayClick={handleDateChange}
+          />
+        </Calendar>
       </Content>
     </Container>
   );

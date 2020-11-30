@@ -9,6 +9,7 @@ import { Container, Header, HeaderContent, Profile, Content, Schedule, NextAppoi
 import logoImg from '../../assets/logo.svg';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
+import { Link } from 'react-router-dom';
 
 interface MonthAvailabilityItem {
   day: number;
@@ -121,10 +122,12 @@ const Dashboard: React.FC = () => {
           <img src={logoImg} alt="GoBarber"/>
 
           <Profile>
-            <img src={user.avatar_url} alt={user.name}/>
+            <img src="https://image.freepik.com/fotos-gratis/gato-malhado-bebe-gatinho-bonito_44074-3686.jpg" alt={user.name}/>
             <div>
               <span>Welcome,</span>
-              <strong>{user.name}</strong>
+              <Link to ="/profile">
+                <strong>{user.name}</strong>
+              </Link>
             </div>
           </Profile>
 

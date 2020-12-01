@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
           <img src={logoImg} alt="GoBarber"/>
 
           <Profile>
-            <img src="https://image.freepik.com/fotos-gratis/gato-malhado-bebe-gatinho-bonito_44074-3686.jpg" alt={user.name}/>
+            <img src={user.avatar_url} alt={user.name}/>
             <div>
               <span>Welcome,</span>
               <Link to ="/profile">

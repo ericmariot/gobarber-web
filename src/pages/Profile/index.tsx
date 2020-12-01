@@ -19,7 +19,9 @@ import { useAuth } from '../../hooks/auth';
 interface ProfileFormData {
   name: string;
   email: string;
+  old_password: string;
   password: string;
+  password_confirmation: string;
 }
 
 const Profile: React.FC = () => {
@@ -36,21 +38,48 @@ const Profile: React.FC = () => {
       const schema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
         email: Yup.string().required('A valid e-mail is required ').email('Type a valid e-mail'),
-        password: Yup.string().min(6, 'Mininum of 6 digits'),
+        old_password: Yup.string(),
+        password: Yup.string().when('old_password', {
+          is: val => !!val.length,
+          then: Yup.string().required('New password needed'),
+          otherwise: Yup.string(),
+        }),
+        password_confirmation: Yup.string()
+        .when('old_password', {
+          is: val => !!val.length,
+          then: Yup.string().required('Password confirmation needed'),
+          otherwise: Yup.string(),
+        }).oneOf(
+          [Yup.ref('password')],
+          'Incorrect confirmation',
+        ),
       });
 
       await schema.validate(data, {
         abortEarly: false,
       });
 
-      await api.post('/users', data);
+      const { name, email, old_password, password, password_confirmation } = data;
 
-      history.push('/');
+      const formData = Object.assign({
+        name,
+        email,
+      }, data.old_password ? {
+        old_password,
+        password,
+        password_confirmation,
+      }: {});
+
+      const response = await api.put('/profile', formData);
+
+      updateUser(response.data);
+
+      history.push('/dashboard');
 
       addToast({
         type: 'success',
-        title: 'Register completed!',
-        description: 'You can already login on GoBarber!.',
+        title: 'Profile updated!',
+        description: 'Your profile informations where done with success!',
       });
     } catch (err) {
       if (err instanceof Yup.ValidationError){
@@ -64,8 +93,8 @@ const Profile: React.FC = () => {
       // disparar um toast
       addToast({
         type: 'error',
-        title: 'Register error',
-        description: 'An error has occured while making your register, check your credentials and try again.',
+        title: 'Update error',
+        description: 'An error has occured while updating your profile, check your credentials and try again.',
       });
     }
   }, [addToast, history]);
@@ -78,6 +107,7 @@ const Profile: React.FC = () => {
 
       api.patch('/users/avatar', data).then((response) => {
         updateUser(response.data);
+        console.log(user.avatar_url);
 
         addToast({
           type: 'success',
@@ -85,7 +115,7 @@ const Profile: React.FC = () => {
         });
       });
     }
-  }, [addToast, updateUser]);
+  }, [addToast, updateUser, user.avatar_url]);
 
   return (
     <Container>
